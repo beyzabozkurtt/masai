@@ -21,8 +21,8 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
+        fontFamily: 'ms-bold',
+        marginBottom: 40,
     },
     content: {
         fontSize: 14,
