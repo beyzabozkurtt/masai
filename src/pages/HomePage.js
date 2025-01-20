@@ -14,11 +14,14 @@ const HomePage = ({ navigation }) => {
             {/* Kategoriler */}
             <Categories navigation={navigation} />
 
-            {/* Blog */}
-            <Blog />
+
 
             {/* Masallar */}
             <Masallar navigation={navigation} />
+
+            {/* Blog */}
+            <Blog />
+
         </ScrollView>
     );
 };

@@ -1,17 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 
 const SplashScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            {/* Resim */}
+            {/* Logo Resmi */}
             <Image
                 source={require('../assets/images/splash_img.png')}
                 style={styles.image}
             />
 
-            {/* Başlık */}
-            <Text style={styles.title}>MasAI</Text>
+            {/* MasAI Yazısı */}
+            <Image
+                source={require('../assets/images/masai_logo.png')} // Logo dosyasını eklediğin yola göre ayarla
+                style={styles.logo}
+            />
+
+            {/* Alt Açıklama */}
             <Text style={styles.subtitle}>
                 Yapay Zekayla kendi Masalını Oluşturmaya Hazır Mısın?
             </Text>
@@ -36,35 +41,38 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     image: {
-        width: 500,
-        height: 500,
+        width: 300,
+        height: 400,
         resizeMode: 'contain',
-        marginBottom: 1,
+        marginBottom: 2,
+        marginEnd: 2,
     },
-    title: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#6c63ff',
-        marginBottom: 10,
+    logo: {
+        width: 200,
+        height: 150,
+        resizeMode: 'contain',
+        marginBottom: 5,
+        marginEnd: 2,
     },
     subtitle: {
         fontSize: 16,
+        fontFamily: 'ms-regular',
         color: '#555',
         textAlign: 'center',
-        marginBottom: 30,
+        marginBottom: 80,
     },
     button: {
         backgroundColor: '#a75cff',
         paddingVertical: 15,
         paddingHorizontal: 40,
         borderRadius: 30,
-        flexDirection: 'row',
         alignItems: 'center',
     },
     buttonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+        fontFamily: 'ms-bold',
     },
 });
 
