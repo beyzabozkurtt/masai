@@ -36,10 +36,10 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     image: {
-        width: 200,
-        height: 200,
+        width: 500,
+        height: 500,
         resizeMode: 'contain',
-        marginBottom: 20,
+        marginBottom: 1,
     },
     title: {
         fontSize: 32,
