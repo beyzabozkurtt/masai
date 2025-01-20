@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     container: {
         marginBottom: 20,
         padding: 15,
-        backgroundColor: 'rgba(246,225,237,0.93)',
+        backgroundColor: '#e8f5e9',
         borderRadius: 15, // Daha yuvarlak kenarlar
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
         color: '#555',
         lineHeight: 20, // Yazılar arasına boşluk
         marginBottom: 10, // Yazı ile footer arasına boşluk
+        fontFamily: 'ms-regular',
     },
     footer: {
         flexDirection: 'row',

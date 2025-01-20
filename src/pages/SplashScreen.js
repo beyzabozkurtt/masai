@@ -44,8 +44,9 @@ const styles = StyleSheet.create({
         width: 300,
         height: 400,
         resizeMode: 'contain',
-        marginBottom: 2,
-        marginEnd: 2,
+        marginBottom: -70,
+        marginTop: -80,
+
     },
     logo: {
         width: 200,
@@ -55,17 +56,18 @@ const styles = StyleSheet.create({
         marginEnd: 2,
     },
     subtitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontFamily: 'ms-regular',
         color: '#555',
         textAlign: 'center',
         marginBottom: 80,
+        maxWidth: 300,
     },
     button: {
         backgroundColor: '#a75cff',
         paddingVertical: 15,
-        paddingHorizontal: 40,
-        borderRadius: 30,
+        paddingHorizontal: 45,
+        borderRadius: 20,
         alignItems: 'center',
     },
     buttonText: {

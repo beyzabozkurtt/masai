@@ -47,6 +47,7 @@ const Masallar = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         marginBottom: 20,
+        marginTop:-15,
     },
     title: {
         fontSize: 18,
@@ -57,14 +58,12 @@ const styles = StyleSheet.create({
     },
     masallarRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
     },
     masal: {
-
         borderRadius: 15, // Köşeleri yuvarlat
-        padding: 10,
+        padding: 5,
         alignItems: 'center',
-
         shadowColor: '#000', // Gölge ekle
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -91,6 +90,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#6c63ff',
         textAlign: 'center',
+        fontFamily: 'ms-light',
     },
 });
 

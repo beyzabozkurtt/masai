@@ -31,6 +31,7 @@ const Categories = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         marginBottom: 30,
+        marginTop: -20,
     },
     title: {
         fontSize: 20,
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
         color: '#333',
         textAlign: 'center',
         fontWeight: 'bold',
+        fontFamily: 'ms-bold',
     },
 });
 

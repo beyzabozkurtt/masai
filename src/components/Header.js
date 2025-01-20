@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 20, // Sol ve sağ boşluk
         marginBottom: 2, // Beyaz alan ile sarı alan arasında boşluk
+        marginTop: 30, // Üstteki boşluk
     },
     iconLeft: {
         padding: 5,
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
         height: 200,
         resizeMode: 'contain',
         position: 'absolute',
-        right: -10, // Yıldızın sağa kaydırılması
+        right: -30, // Yıldızın sağa kaydırılması
         bottom: 25, // Yıldızın aşağı kaydırılması
     },
 });

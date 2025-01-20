@@ -204,7 +204,7 @@ const MasalGeneratePage = ({ route, navigation }) => {
                      <TouchableOpacity style={styles.buttonBack1} onPress={handlePreviousStep}>
                          <Text style={styles.buttonTextBack1}>Geri Dön</Text>
                      </TouchableOpacity>
-                     <TouchableOpacity style={styles.button1} onPress={handleNextStep}>
+                     <TouchableOpacity style={styles.button1} onPress={() => navigation.navigate('Home')}>
                          <Text style={styles.buttonText1}>Tamam</Text>
                      </TouchableOpacity>
                  </View>
@@ -416,7 +416,6 @@ const styles = StyleSheet.create({
     //step3
     subtitleContainer: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
         backgroundColor: '#f0f4ff',
         padding: 15,
         marginBottom: -25,
