@@ -4,22 +4,86 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Alert,TextInput,Keyboa
     TouchableWithoutFeedback,
     Keyboard, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Tik ikonu için
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const API_URL = 'https://masal-backend-on7u.onrender.com';
 const MasalGeneratePage = ({ route, navigation }) => {
     const [currentStep, setCurrentStep] = useState(1); // Aktif adım
-    const [selectedCharacter, setSelectedCharacter] = useState(null); // Seçilen karakter
+    const [selectedCharacter, setSelectedCharacter] = useState(null); 
+    const [characterInput, setCharacterInput] = useState('');
+    const [characters, setCharacters] = useState([]);
+    const [title, setTitle] = useState('');
+    const [starter, setStarter] = useState('');
+    const [selectedTheme, setSelectedTheme] = useState(); 
 
-    const handleNextStep = () => {
-        if (currentStep === 1 && !selectedCharacter) {
-            Alert.alert('Hata', 'Bir karakter seçmeden devam edemezsin!');
-            return;
+
+    const addCharacter = () => {
+        const trimmed = characterInput.trim();
+        if (trimmed && !characters.includes(trimmed)) {
+          setCharacters([...characters, trimmed]);
+          setCharacterInput('');
         }
-        if (currentStep < 4) {
-            setCurrentStep(currentStep + 1);
+      };
+      const handleGenerateStory = async () => {
+        if (!title || !starter || !selectedTheme || characters.length === 0) {
+          Alert.alert("Eksik Bilgi", "Tüm alanları doldurmalısın!");
+          return;
+        }
+      
+        try {
+          const token = await AsyncStorage.getItem('token');
+          const response = await axios.post(
+            'https://masal-backend-on7u.onrender.com/ai/generate',
+            {
+              title,
+              theme: selectedTheme,
+              characters,
+              starter,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+      
+          const fullStory = response.data.fullStory;
+          navigation.navigate('StoryResult', {
+            fullStory,
+            title,
+            characters,
+            theme: selectedTheme,
+          });
+      
+        } catch (err) {
+          Alert.alert("Hata", "Masal oluşturulurken bir sorun oluştu.");
+          console.error(err);
+        }
+      };
+      const handleNextStep = () => {
+        if (currentStep === 1 && !selectedTheme) {
+          Alert.alert('Hata', 'Lütfen bir tema seçin!');
+          return;
+        }
+      
+        if (currentStep === 2 && characters.length === 0) {
+          Alert.alert('Hata', 'Lütfen en az bir karakter ekleyin.');
+          return;
+        }
+      
+        if (currentStep === 3 && (!title.trim() || !starter.trim())) {
+          Alert.alert('Hata', 'Lütfen başlık ve başlangıç cümlesi girin.');
+          return;
+        }
+      
+        if (currentStep < 3) {
+          setCurrentStep(currentStep + 1);
         } else {
-            navigation.navigate('StoryResult', { theme, selectedCharacter });
+          handleGenerateStory(); // ✅ AI'ya gönder
         }
-    };
+      };
+      
 
     const handlePreviousStep = () => {
         if (currentStep > 1) {
@@ -27,17 +91,14 @@ const MasalGeneratePage = ({ route, navigation }) => {
         }
     };
 
-    const characters = [
-        { name: 'Asel', image: require('../assets/images/asel.png'), style: styles.characterImage },
-        { name: 'Cesim', image: require('../assets/images/cesim.png'), style: styles.cesimImage },
-        { name: 'Beyza', image: require('../assets/images/beyza.png'), style: styles.characterImage },
-        { name: 'Tavşan', image: require('../assets/images/tavsan.png'), style: styles.rabbitImage },
-    ];
     const theme = [
-        { name: 'Keşif', image: require('../assets/images/kesif.png'), style: styles.characterImage },
-        { name: 'Gizem', image: require('../assets/images/gizem.png'), style: styles.gizemImage },
-        { name: 'Macera', image: require('../assets/images/macera.png'), style: styles.characterImage },
-        { name: 'Dostluk', image: require('../assets/images/dostluk.png'), style: styles.rabbitImage },
+        { name: 'macera', label: 'Macera' },
+        { name: 'dostluk', label: 'Dostluk' },
+        { name: 'bilgelik', label: 'Bilgelik' },
+        { name: 'doğa', label: 'Doğa' },
+        { name: 'hayvanlar', label: 'Hayvanlar' },
+        { name: 'aile', label: 'Aile' },
+        { name: 'sihir', label: 'Sihir' },
     ]; 
 
     return (
@@ -109,20 +170,19 @@ const MasalGeneratePage = ({ route, navigation }) => {
                 <View style={styles.stepContent}>
                     <Text style={styles.header}>Masalının Temasını Seç</Text>
                     <View style={styles.characterContainer}>
-                        {theme.map((theme, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[
-                                    styles.characterBox,
-                                    selectedCharacter === theme.name && styles.selectedCharacter,
-                                ]}
-                                onPress={() => setSelectedCharacter(theme.name)}
-                            >
-                                <Image source={theme.image} style={theme.style} />
-                                <Text style={styles.characterName}>{theme.name}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                {theme.map((item, index) => (
+                    <TouchableOpacity
+                    key={index}
+                    style={[
+                        styles.characterBox,
+                        selectedTheme === item.name && styles.selectedCharacter,
+                    ]}
+                    onPress={() => setSelectedTheme(item.name)}
+                    >
+                    <Text style={styles.characterName}>{item.label}</Text>
+                    </TouchableOpacity>
+                ))}
+                </View>
                     <View style={styles.buttonContainerSingle}>
                         <TouchableOpacity style={styles.button} onPress={handleNextStep}>
                             <Text style={styles.buttonText}>Devam Et</Text>
@@ -131,85 +191,97 @@ const MasalGeneratePage = ({ route, navigation }) => {
                 </View>
             )}
 
-            {currentStep === 2 && (
-                <View style={styles.stepContent}>
-                <Text style={styles.header}>Karakterini Seç</Text>
-                <View style={styles.characterContainer}>
-                    {characters.map((character, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={[
-                                styles.characterBox,
-                                selectedCharacter === character.name && styles.selectedCharacter,
-                            ]}
-                            onPress={() => setSelectedCharacter(character.name)}
-                        >
-                            <Image source={character.image} style={character.style} />
-                            <Text style={styles.characterName}>{character.name}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-                <View style={styles.buttonContainer}>
-                     <TouchableOpacity style={styles.buttonBack} onPress={handlePreviousStep}>
-                         <Text style={styles.buttonTextBack}>Geri Dön</Text>
-                     </TouchableOpacity>
-                     <TouchableOpacity style={styles.button} onPress={handleNextStep}>
-                         <Text style={styles.buttonText}>Devam Et</Text>
-                     </TouchableOpacity>
-                 </View>
-            </View>
-            )}
+{currentStep === 2 && (
+  <View style={styles.stepContent}>
+    <Text style={styles.header}>Karakter(lerini) Yaz</Text>
 
-            {currentStep === 3 && (
-                <View style={styles.stepContent}>
-                    <Text style={styles.header}>Masalının Başlangıcını Yaz</Text>
-                    <View style={styles.subtitleContainer}>
-                    <Image
-                        source={require('../assets/images/kalem.png')} // Kalem resmini buraya ekle
-                        style={styles.subtitleIcon}
-                    />
-                        <View style={styles.subtitleTextContainer}>
-                            <Text style={styles.subtitleTitle}>Macera</Text>
-                        </View>
-                    </View>
-                    {/* Masal Başlangıcı Giriş Kutusu */}
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Bir zamanlar, küçük bir kasabada yaşayan Cesim adında çok meraklı bir çocuk varmış..."
-                        placeholderTextColor="#aaa"
-                        multiline
-                        numberOfLines={4}
-                        textAlignVertical="top"
-                        returnKeyType="done"
-                        onKeyPress={({ nativeEvent }) => {
-                            if (nativeEvent.key === 'Enter') {
-                                Keyboard.dismiss(); // Klavyeyi kapat
-                            }
-                        }}
-                    />
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.buttonBack} onPress={handlePreviousStep}>
-                            <Text style={styles.buttonTextBack}>Geri Dön</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={handleNextStep}>
-                            <Text style={styles.buttonText}>Oluştur</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            )}
-            {currentStep === 4 && (
-                <View style={styles.stepContent}>
-                <Text style={styles.header1}>Masalın Oluşturuluyor...</Text>
-                <View style={styles.buttonContainer1}>
-                     <TouchableOpacity style={styles.buttonBack1} onPress={handlePreviousStep}>
-                         <Text style={styles.buttonTextBack1}>Geri Dön</Text>
-                     </TouchableOpacity>
-                     <TouchableOpacity style={styles.button1} onPress={() => navigation.navigate('Home')}>
-                         <Text style={styles.buttonText1}>Tamam</Text>
-                     </TouchableOpacity>
-                 </View>
-            </View>
-            )}
+    <TextInput
+      style={styles.inputShort}
+      placeholder="Karakter adı gir (örn: Prenses)"
+      value={characterInput}
+      onChangeText={setCharacterInput}
+      onSubmitEditing={addCharacter}
+      returnKeyType="done"
+    />
+
+    <TouchableOpacity style={styles.addButton} onPress={addCharacter}>
+      <Text style={styles.addButtonText}>Ekle</Text>
+    </TouchableOpacity>
+
+    <View style={styles.characterTagContainer}>
+      {characters.map((char, index) => (
+        <View key={index} style={styles.characterTag}>
+          <Text style={styles.characterTagText}>{char}</Text>
+        </View>
+      ))}
+    </View>
+
+    <View style={styles.buttonContainer}>
+      <TouchableOpacity style={styles.buttonBack} onPress={handlePreviousStep}>
+        <Text style={styles.buttonTextBack}>Geri Dön</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          if (characters.length === 0) {
+            Alert.alert('Hata', 'Lütfen en az bir karakter ekleyin.');
+            return;
+          }
+          handleNextStep();
+        }}
+      >
+        <Text style={styles.buttonText}>Devam Et</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+)}
+
+
+{currentStep === 3 && (
+  <View style={styles.stepContent}>
+    <Text style={styles.header}>Masalının Detaylarını Yaz</Text>
+
+    <TextInput
+      style={styles.inputShort}
+      placeholder="Masal Başlığı (örn: Ay Işığı Kraliçesi)"
+      placeholderTextColor="#aaa"
+      value={title}
+      onChangeText={setTitle}
+    />
+
+    <View style={styles.subtitleContainer}>
+      <Image
+        source={require('../assets/images/kalem.png')}
+        style={styles.subtitleIcon}
+      />
+      <View style={styles.subtitleTextContainer}>
+        <Text style={styles.subtitleTitle}>Başlangıç Cümlesi</Text>
+      </View>
+    </View>
+
+    <TextInput
+      style={styles.input}
+      placeholder="Bir zamanlar, küçük bir köyde yaşayan meraklı bir çocuk varmış..."
+      placeholderTextColor="#aaa"
+      multiline
+      numberOfLines={4}
+      textAlignVertical="top"
+      value={starter}
+      onChangeText={setStarter}
+    />
+
+    <View style={styles.buttonContainer}>
+      <TouchableOpacity style={styles.buttonBack} onPress={handlePreviousStep}>
+        <Text style={styles.buttonTextBack}>Geri Dön</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleNextStep}>
+        <Text style={styles.buttonText}>Oluştur</Text>
+        </TouchableOpacity>
+
+    </View>
+  </View>
+)}
+
         </View>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -296,11 +368,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        marginBottom: 20,
     },
     characterBox: {
         width: 170,
-        height: 200,
+        height: 120,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 30,
@@ -455,6 +526,54 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#6c63ff',
     },
+    //karakter girmece
+    inputShort: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        backgroundColor: '#f9f9f9',
+        padding: 14,
+        borderRadius: 12,
+        fontFamily: 'ms-regular',
+        fontSize: 16,
+        marginBottom: 10,
+        width: '100%',
+      },
+      
+      addButton: {
+        backgroundColor: '#6c63ff',
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 25,
+        alignSelf: 'center',
+        marginBottom: 20,
+      },
+      
+      addButtonText: {
+        color: '#fff',
+        fontFamily: 'ms-bold',
+        fontSize: 16,
+      },
+      
+      characterTagContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        marginBottom: 20,
+      },
+      
+      characterTag: {
+        backgroundColor: '#eae8ff',
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+        margin: 5,
+      },
+      
+      characterTagText: {
+        fontFamily: 'ms-regular',
+        color: '#6c63ff',
+      }
+      
     
 });
 
