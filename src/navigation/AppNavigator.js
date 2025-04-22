@@ -7,6 +7,9 @@ import { View, ActivityIndicator } from 'react-native';
 import SplashScreen from '../pages/SplashScreen';
 import HomePage from '../pages/HomePage';
 import MasalGeneratePage from '../pages/MasalGeneratePage';
+import RegisterScreen from '../pages/RegisterScreen';
+import LoginScreen from '../pages/LoginScreen';
+import StoryResult from '../pages/StoryResult'; 
 
 const Stack = createStackNavigator();
 
@@ -45,18 +48,37 @@ const AppNavigator = () => {
                     component={SplashScreen}
                     options={{ headerShown: false }}
                 />
+                {/* LoginRegister Page */}
+                <Stack.Screen
+                    name="RegisterScreen"
+                    component={RegisterScreen}
+                    options={{ headerShown: false }} 
+                />
+                <Stack.Screen
+                    name="LoginScreen"
+                    component={LoginScreen}
+                    options={{ headerShown: false }} 
+                />
 
                 {/* Home Page */}
                 <Stack.Screen
                     name="Home"
                     component={HomePage}
-                    options={{ headerShown: false }} // Header.js burada kullanılacak
+                    options={{ 
+                        headerShown: false,
+                        gestureEnabled: false, 
+                      }}  
                 />
 
                 {/* Masal Generate Page */}
                 <Stack.Screen
                     name="MasalGeneratePage"
                     component={MasalGeneratePage}
+                    options={{ headerShown: false }} // Header.js burada kullanılacak
+                />
+                <Stack.Screen
+                    name="StoryResult"
+                    component={StoryResult}
                     options={{ headerShown: false }} // Header.js burada kullanılacak
                 />
             </Stack.Navigator>
