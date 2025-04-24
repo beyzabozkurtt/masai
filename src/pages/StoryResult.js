@@ -2,16 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
 export default function StoryResult({ route, navigation }) {
-  const { title, fullStory, theme, characters } = route.params;
+  const { title, fullStory, theme, characters = [] } = route.params;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{title}</Text>
 
       <Text style={styles.subtitle}>Tema: {theme}</Text>
-      <Text style={styles.subtitle}>Karakterler: {characters.join(', ')}</Text>
+      <Text style={styles.subtitle}>
+        Karakterler: {characters.length > 0 ? characters.join(', ') : 'Belirtilmemiş'}
+      </Text>
 
-      <Text style={styles.story}>{fullStory}</Text>
+      <Text style={styles.story}>{fullStory ? fullStory : 'Masal içeriği bulunamadı.'}</Text>
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
         <Text style={styles.buttonText}>Ana Sayfaya Dön</Text>

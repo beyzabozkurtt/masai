@@ -10,6 +10,7 @@ import MasalGeneratePage from '../pages/MasalGeneratePage';
 import RegisterScreen from '../pages/RegisterScreen';
 import LoginScreen from '../pages/LoginScreen';
 import StoryResult from '../pages/StoryResult'; 
+import PublicStoriesPage from '../pages/PublicStoriesPage';
 
 const Stack = createStackNavigator();
 
@@ -81,6 +82,13 @@ const AppNavigator = () => {
                     component={StoryResult}
                     options={{ headerShown: false }} // Header.js burada kullanılacak
                 />
+
+                <Stack.Screen
+                name="PublicStoriesPage"
+                component={PublicStoriesPage}
+                options={{ headerShown: false }}
+                />
+
             </Stack.Navigator>
         </NavigationContainer>
     );
