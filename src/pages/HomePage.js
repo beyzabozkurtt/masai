@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
 import Header from '../components/Header';
 import Categories from '../components/Categories';
 import Blog from '../components/Blog';
@@ -46,5 +46,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
 });
+
+
 
 export default HomePage;

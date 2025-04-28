@@ -1,29 +1,37 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 const categories = [
-    { title: 'Keşif', image: require('../assets/images/kesif.png') },
-    { title: 'Gizem', image: require('../assets/images/gizemli.png') },
-    { title: 'Macera', image: require('../assets/images/macera.png') },
-    { title: 'Dostluk', image: require('../assets/images/dostluk.png') },
+    { title: 'Keşif' },
+    { title: 'Gizem' },
+    { title: 'Macera' },
+    { title: 'Dostluk' },
+    { title: 'Doğa' },
+    { title: 'Bilgelik' },
+    { title: 'Hayvanlar' },
+    { title: 'Aile' },
+    { title: 'Sihir' },
 ];
 
 const Categories = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}></Text>
-            <View style={styles.categoriesRow}>
+            <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                contentContainerStyle={styles.categoriesRow}
+            >
                 {categories.map((category, index) => (
                     <TouchableOpacity
                         key={index}
                         style={styles.category}
-                        onPress={() => navigation.navigate('MasalGeneratePage', { theme: category.title })}
+                        onPress={() => navigation.navigate('CategoryStoriesPage', { theme: category.title })}
                     >
-                        <Image source={category.image} style={styles.image} />
                         <Text style={styles.text}>{category.title}</Text>
                     </TouchableOpacity>
                 ))}
-            </View>
+            </ScrollView>
         </View>
     );
 };
@@ -42,25 +50,22 @@ const styles = StyleSheet.create({
     },
     categoriesRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 10,
     },
     category: {
         alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '#e8f5e9',
-        padding: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
         borderRadius: 15,
-        width: '22%',
+        marginRight: 12,
         height: 100,
-
-    },
-    image: {
-        width: 55,
-        height: 55,
-        resizeMode: 'contain',
-        marginBottom: 10,
+        minWidth: 90,
     },
     text: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#333',
         textAlign: 'center',
         fontWeight: 'bold',

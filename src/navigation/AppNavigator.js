@@ -11,6 +11,7 @@ import RegisterScreen from '../pages/RegisterScreen';
 import LoginScreen from '../pages/LoginScreen';
 import StoryResult from '../pages/StoryResult'; 
 import PublicStoriesPage from '../pages/PublicStoriesPage';
+import CategoryStoriesPage from '../pages/CategoryStoriesPage';
 
 const Stack = createStackNavigator();
 
@@ -88,6 +89,11 @@ const AppNavigator = () => {
                 component={PublicStoriesPage}
                 options={{ headerShown: false }}
                 />
+                <Stack.Screen
+                name="CategoryStoriesPage"
+                component={CategoryStoriesPage}
+                options={{ headerShown: false }}
+/>
 
             </Stack.Navigator>
         </NavigationContainer>
