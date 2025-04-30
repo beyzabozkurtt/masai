@@ -38,7 +38,7 @@ export default function CategoryStoriesPage({ route, navigation }) {
     <TouchableOpacity
       style={styles.card}
       onPress={() =>
-        navigation.navigate('StoryResult', {
+        navigation.navigate('StoryDetail', {
           title: item.title || 'Başlık yok',
           theme: item.theme || 'Tema yok',
           likesCount: item.likesCount || 0,

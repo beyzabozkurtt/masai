@@ -1,47 +1,62 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-
-const masallar = [
-  {
-    id: 1,
-    title: 'Gizemli Orman',
-    author: 'Beyza Bozkurt',
-    image: require('../assets/images/buyukmacera.png'),
-  },
-  {
-    id: 3,
-    title: 'Gerçek Dostluk',
-    author: 'Asıl Turatbek Kyzy',
-    image: require('../assets/images/gercek_dostluk.png'),
-  },
-  {
-    id: 2,
-    title: 'Büyük Macera',
-    author: 'Cesim Poyraz',
-    image: require('../assets/images/gizemli_orman.png'),
-  },
-];
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const Masallar = ({ navigation }) => {
+  const [masallar, setMasallar] = useState([]);
+
+  useEffect(() => {
+    const fetchMasallar = async () => {
+      try {
+        const response = await fetch('https://masal-backend-on7u.onrender.com/story/top-stories?limit=3');
+        const data = await response.json();
+        console.log('GELEN MASALLAR:', JSON.stringify(data, null, 2)); // 👈 BURAYA BAK
+  
+        if (Array.isArray(data)) {
+          setMasallar(data);
+        } else {
+          setMasallar([]);
+        }
+      } catch (error) {
+        console.error('Masallar alınamadı:', error);
+        setMasallar([]);
+      }
+    };
+  
+    fetchMasallar();
+  }, []);
+  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Masal Kütüphanesi</Text>
       <View style={styles.masallarRow}>
         {masallar.map((masal) => (
           <TouchableOpacity
-            key={masal.id}
-            style={styles.masal}
+            key={masal._id}
+            style={[styles.masal, { backgroundColor: '#f0f0f0' }]}
             onPress={() =>
-              navigation.navigate('MasalGeneratePage', { masal: masal.title })
+              navigation.navigate('StoryResult', {
+                id: masal._id,
+                title: masal.title,
+                fullStory: masal.fullStory, // ❗ BU SATIR VAR MI? YOKSA EKLE ❗
+                author: masal.userRef?.name || 'Bilinmeyen',
+                theme: masal.theme,
+                characters: masal.characters,
+              })
             }
+            
+            
+            
           >
-            <Image source={masal.image} style={styles.image} />
+            <View style={styles.plusBox}>
+              <Text style={styles.plusText}>📘</Text>
+            </View>
             <Text style={styles.text}>{masal.title}</Text>
-            <Text style={styles.author}>{masal.author}</Text>
+            <Text style={styles.author}>{masal.userRef?.name || 'Bilinmeyen'}</Text>
           </TouchableOpacity>
         ))}
 
-        {/* ✅ Tüm Masallar kutucuğu */}
+        {/* Tüm Masallar kutucuğu */}
         <TouchableOpacity
           style={[styles.masal, { backgroundColor: '#f0f0f0' }]}
           onPress={() => navigation.navigate('PublicStoriesPage')}
@@ -75,7 +90,7 @@ const styles = StyleSheet.create({
   },
   masal: {
     borderRadius: 15,
-    padding: 5,
+    padding: 10,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -85,13 +100,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: 10,
     width: 150,
-  },
-  image: {
-    width: '110%',
-    height: 160,
-    resizeMode: 'cover',
-    marginBottom: 8,
-    borderRadius: 10,
   },
   text: {
     fontSize: 14,
