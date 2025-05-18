@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert,TextInput,KeyboardAvoidingView,
     Platform,
     TouchableWithoutFeedback,
-    Keyboard, } from 'react-native';
+    Keyboard,
+    ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Tik ikonu için
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Switch } from 'react-native';
 
-const API_URL = 'https://masal-backend-on7u.onrender.com';
+import { API_URL } from '@env';
+
 const MasalGeneratePage = ({ route, navigation }) => {
     const [currentStep, setCurrentStep] = useState(1); // Aktif adım
     const [selectedCharacter, setSelectedCharacter] = useState(null); 
@@ -16,6 +19,18 @@ const MasalGeneratePage = ({ route, navigation }) => {
     const [title, setTitle] = useState('');
     const [starter, setStarter] = useState('');
     const [selectedTheme, setSelectedTheme] = useState(); 
+    const [isPublic, setIsPublic] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [username, setUsername] = useState('');
+    
+    useEffect(() => {
+    const fetchUsername = async () => {
+      const name = await AsyncStorage.getItem('username');
+      setUsername(name || 'Bilinmeyen');
+    };
+    fetchUsername();
+  }, []);
+
 
 
     const addCharacter = () => {
@@ -26,41 +41,45 @@ const MasalGeneratePage = ({ route, navigation }) => {
         }
       };
       const handleGenerateStory = async () => {
-        if (!title || !starter || !selectedTheme || characters.length === 0) {
-          Alert.alert("Eksik Bilgi", "Tüm alanları doldurmalısın!");
-          return;
-        }
-      
-        try {
-          const token = await AsyncStorage.getItem('token');
-          const response = await axios.post(
-            'https://masal-backend-on7u.onrender.com/ai/generate',
-            {
-              title,
-              theme: selectedTheme,
-              characters,
-              starter,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-      
-          const fullStory = response.data.fullStory;
-          navigation.navigate('StoryResult', {
-            fullStory,
-            title,
-            characters,
-            theme: selectedTheme,
-          });
-      
-        } catch (err) {
-          Alert.alert("Hata", "Masal oluşturulurken bir sorun oluştu.");
-          console.error(err);
-        }
-      };
+  if (!title || !starter || !selectedTheme || characters.length === 0) {
+    Alert.alert("Eksik Bilgi", "Tüm alanları doldurmalısın!");
+    return;
+  }
+
+  try {
+    setIsGenerating(true); // 🔄 Yükleme başlasın
+    const token = await AsyncStorage.getItem('token');
+    const response = await axios.post(
+      `${API_URL}/ai/generate`,
+      {
+        title,
+        theme: selectedTheme,
+        characters,
+        starter,
+        isPublic,
+        author: username,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const fullStory = response.data.fullStory;
+    navigation.navigate('StoryResult', {
+      fullStory,
+      title,
+      characters,
+      theme: selectedTheme,
+    });
+  } catch (err) {
+    Alert.alert("Hata", "Masal oluşturulurken bir sorun oluştu.");
+    console.error(err);
+  } finally {
+    setIsGenerating(false); // ✅ Yükleme bitti
+  }
+};
       const handleNextStep = () => {
         if (currentStep === 1 && !selectedTheme) {
           Alert.alert('Hata', 'Lütfen bir tema seçin!');
@@ -269,6 +288,18 @@ const MasalGeneratePage = ({ route, navigation }) => {
       value={starter}
       onChangeText={setStarter}
     />
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+      <Switch
+        value={isPublic}
+        onValueChange={(value) => setIsPublic(value)}
+        thumbColor={isPublic ? '#6c63ff' : '#ccc'}
+        trackColor={{ false: '#ccc', true: '#d9d4ff' }}
+      />
+      <Text style={{ marginLeft: 10, fontFamily: 'ms-regular', fontSize: 16 }}>
+        Masal herkese açık olsun
+      </Text>
+    </View>
+
 
     <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.buttonBack} onPress={handlePreviousStep}>
@@ -279,6 +310,15 @@ const MasalGeneratePage = ({ route, navigation }) => {
         </TouchableOpacity>
 
     </View>
+  </View>
+  
+)}
+{isGenerating && (
+  <View style={{ alignItems: 'center', marginVertical: 20 }}>
+    <ActivityIndicator size="large" color="#6c63ff" />
+    <Text style={{ marginTop: 10, fontFamily: 'ms-regular', fontSize: 16, color: '#6c63ff' }}>
+      Masalın oluşturuluyor, biraz bekle...
+    </Text>
   </View>
 )}
 
