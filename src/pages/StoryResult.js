@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-
+import { API_URL } from '@env';
 export default function StoryResult({ route, navigation }) {
   const {
     id, // 👈 masal ID'si gönderilmiş mi kontrol ediyoruz
@@ -26,7 +26,7 @@ export default function StoryResult({ route, navigation }) {
     const fetchStoryIfNeeded = async () => {
       if (!routeStory && id) {
         try {
-          const response = await fetch(`https://masal-backend-on7u.onrender.com/story/${id}`);
+          const response = await fetch(`${API_URL}/story/${id}`);
           const data = await response.json();
           setStoryData({
             title: data.title || 'Başlık Yok',
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: '#fff',
     flexGrow: 1,
+    marginTop: 60,
   },
   loader: {
     flex: 1,

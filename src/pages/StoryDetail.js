@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-
+import { API_URL } from '@env';
 const StoryDetail = ({ route }) => {
   const { id } = route.params;
   const [story, setStory] = useState(null);
@@ -8,7 +8,7 @@ const StoryDetail = ({ route }) => {
   useEffect(() => {
     const fetchStory = async () => {
       try {
-        const response = await fetch(`https://masal-backend-on7u.onrender.com/story/${id}`);
+        const response = await fetch(`${API_URL}/story/${id}`);
         const data = await response.json();
         setStory(data);
       } catch (error) {

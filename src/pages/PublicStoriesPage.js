@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 
-const API_URL = 'https://masal-backend-on7u.onrender.com';
+import { API_URL } from '@env';
 
 const themes = [
   'macera',

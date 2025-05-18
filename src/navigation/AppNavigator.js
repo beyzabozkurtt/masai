@@ -76,7 +76,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="StoryResult"
           component={StoryResult}
-          options={{ headerShown: false }}
+          options={{ 
+            headerShown: false,
+            gestureEnabled: false,
+           }}
+          
         />
         <Stack.Screen
           name="StoryDetail" // ✅ Eklendi
