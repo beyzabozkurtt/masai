@@ -119,12 +119,13 @@ export default function PublicStoriesPage({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', padding: 20 },
+  container: { flex: 1, backgroundColor: '#fff', padding: 20,marginTop:50 },
   pageTitle: {
     fontSize: 24,
     fontFamily: 'ms-bold',
     color: '#6c63ff',
     marginBottom: 15,
+    textAlign:"center"
   },
   themeFilter: {
     flexDirection: 'row',

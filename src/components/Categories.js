@@ -38,10 +38,11 @@ const Categories = ({ navigation }) => {
             key={index}
             style={[styles.category, { width: boxWidth, height: boxHeight }]}
             onPress={() =>
-              navigation.navigate('CategoryStoriesPage', {
-                theme: category.title,
-              })
-            }
+  navigation.navigate('HomeStack', {
+  screen: 'CategoryStoriesPage',
+  params: { theme: category.title },
+})
+}
           >
             <Text style={styles.text}>{category.title}</Text>
           </TouchableOpacity>

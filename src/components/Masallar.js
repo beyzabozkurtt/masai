@@ -43,14 +43,17 @@ const Masallar = ({ navigation }) => {
             style={styles.masal}
             onPress={() =>
               masal._id === 'see-all'
-                ? navigation.navigate('PublicStoriesPage')
-                : navigation.navigate('StoryResult', {
-                    id: masal._id,
-                    title: masal.title,
-                    fullStory: masal.fullStory,
-                    author: masal.userRef?.name || 'Bilinmeyen',
-                    theme: masal.theme,
-                    characters: masal.characters,
+                ? navigation.navigate('Keşfet')
+                : navigation.navigate('HomeStack', {
+                    screen: 'StoryResult',
+                    params: {
+                      id: masal._id,
+                      title: masal.title,
+                      fullStory: masal.fullStory,
+                      author: masal.userRef?.name || 'Bilinmeyen',
+                      theme: masal.theme,
+                      characters: masal.characters,
+                    },
                   })
             }
           >

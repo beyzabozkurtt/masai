@@ -1,24 +1,29 @@
-import React, { useEffect,useRef } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { Feather } from '@expo/vector-icons';
-import {
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  Platform,
-  Animated,
-} from 'react-native';
+import { TouchableOpacity, View, StyleSheet, Platform } from 'react-native';
 
 import HomePage from '../pages/HomePage';
 import MasalGeneratePage from '../pages/MasalGeneratePage';
 import PublicStoriesPage from '../pages/PublicStoriesPage';
-
+import CategoryStoriesPage from '../pages/CategoryStoriesPage';
+import StoryResult from '../pages/StoryResult';
 const Tab = createBottomTabNavigator();
+const HomeStack = createStackNavigator();
 
-// 🔮 Özel FAB Button – focused durumuna göre scale animasyonu ve shadow
+// ✅ Anasayfa + Kategori için Stack
+const HomeStackScreen = () => (
+  <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+    <HomeStack.Screen name="HomePage" component={HomePage} />
+    <HomeStack.Screen name="CategoryStoriesPage" component={CategoryStoriesPage} />
+    <HomeStack.Screen name="StoryResult" component={StoryResult} />
+  </HomeStack.Navigator>
+);
+
+// ✅ FAB buton
 const CustomTabBarButton = ({ children, onPress, accessibilityState }) => {
   const focused = accessibilityState?.selected;
-
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -28,7 +33,7 @@ const CustomTabBarButton = ({ children, onPress, accessibilityState }) => {
       <View
         style={[
           styles.fabButton,
-          focused && styles.fabButtonFocused, // Aktifse büyüsün ve renk değişsin
+          focused && styles.fabButtonFocused,
         ]}
       >
         {children}
@@ -37,71 +42,55 @@ const CustomTabBarButton = ({ children, onPress, accessibilityState }) => {
   );
 };
 
+const BottomTabs = () => (
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      headerShown: false,
+      tabBarShowLabel: false,
+      tabBarActiveTintColor: '#6c63ff',
+      tabBarInactiveTintColor: '#aaa',
+      tabBarStyle: {
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        height: 85,
+        paddingBottom: 10,
+        paddingTop: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 10,
+        borderColor: '#6c63ff',
+        borderWidth: 0.6,
+      },
+      tabBarIcon: ({ color, focused }) => {
+        let iconName = 'circle';
+        if (route.name === 'HomeStack') iconName = 'home';
+        if (route.name === 'Masal Oluştur') iconName = 'edit-3';
+        if (route.name === 'Keşfet') iconName = 'book-open';
 
-
-const BottomTabs = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: '#6c63ff',
-        tabBarInactiveTintColor: '#aaa',
-        tabBarStyle: {
-            backgroundColor: '#fff',
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            height: 85,
-            paddingBottom: 10,
-            paddingTop: 15,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.05,
-            shadowRadius: 4,
-            elevation: 10,
-            borderColor: '#6c63ff',     // 🔮 Mor çerçeve
-            borderWidth: 0.6,
-            },
-
-        tabBarIcon: ({ color, size, focused }) => {
-          let iconName = 'circle';
-          let iconColor = color;
-
-          if (route.name === 'Anasayfa') {
-            iconName = 'home';
-          } else if (route.name === 'Masal Oluştur') {
-            iconName = 'edit-3';
-            iconColor = '#fff';
-          } else if (route.name === 'Keşfet') {
-            iconName = 'book-open';
-          }
-
-          return (
-            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Feather
-                name={iconName}
-                size={focused && route.name === 'Masal Oluştur' ? 28 : 24}
-                color={iconColor}
-              />
-            </View>
-          );
-        },
-      })}
-    >
-      <Tab.Screen name="Anasayfa" component={HomePage} />
-
-      <Tab.Screen
-        name="Masal Oluştur"
-        component={MasalGeneratePage}
-        options={{
-          tabBarButton: (props) => <CustomTabBarButton {...props} />,
-        }}
-      />
-
-      <Tab.Screen name="Keşfet" component={PublicStoriesPage} />
-    </Tab.Navigator>
-  );
-};
+        return (
+          <Feather
+            name={iconName}
+            size={focused && route.name === 'Masal Oluştur' ? 28 : 24}
+            color={route.name === 'Masal Oluştur' ? '#fff' : color}
+          />
+        );
+      },
+    })}
+  >
+    <Tab.Screen name="HomeStack" component={HomeStackScreen} />
+    <Tab.Screen
+      name="Masal Oluştur"
+      component={MasalGeneratePage}
+      options={{
+        tabBarButton: (props) => <CustomTabBarButton {...props} />,
+      }}
+    />
+    <Tab.Screen name="Keşfet" component={PublicStoriesPage} />
+  </Tab.Navigator>
+);
 
 const styles = StyleSheet.create({
   fabContainer: {
@@ -122,17 +111,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 6,
-},
-fabButtonFocused: {
-  width: 95, // Büyüyor
-  height: 95,
-  borderRadius: 38,
-  backgroundColor: '#3b30cc', // Yeni renk
-  shadowOpacity: 0.4,
-  shadowRadius: 12,
-  elevation: 10,
-},
+  },
+  fabButtonFocused: {
+    width: 95,
+    height: 95,
+    borderRadius: 48,
+    backgroundColor: '#3b30cc',
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 10,
+  },
 });
-
 
 export default BottomTabs;

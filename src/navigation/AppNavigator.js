@@ -6,14 +6,11 @@ import { View, ActivityIndicator } from 'react-native';
 import { DefaultTheme } from '@react-navigation/native';
 // Pages
 import SplashScreen from '../pages/SplashScreen';
-import HomePage from '../pages/HomePage';
 import MasalGeneratePage from '../pages/MasalGeneratePage';
 import RegisterScreen from '../pages/RegisterScreen';
 import LoginScreen from '../pages/LoginScreen';
-import StoryResult from '../pages/StoryResult';
 import StoryDetail from '../pages/StoryDetail'; // ✅ Yeni sayfa eklendi
 import PublicStoriesPage from '../pages/PublicStoriesPage';
-import CategoryStoriesPage from '../pages/CategoryStoriesPage';
 import BottomTabs from './BottomTabs';
 const Stack = createStackNavigator();
 
@@ -81,15 +78,6 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="StoryResult"
-          component={StoryResult}
-          options={{ 
-            headerShown: false,
-            gestureEnabled: false,
-           }}
-          
-        />
-        <Stack.Screen
           name="StoryDetail" // ✅ Eklendi
           component={StoryDetail}
           options={{ headerShown: false }}
@@ -97,11 +85,6 @@ const AppNavigator = () => {
         <Stack.Screen
           name="PublicStoriesPage"
           component={PublicStoriesPage}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="CategoryStoriesPage"
-          component={CategoryStoriesPage}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

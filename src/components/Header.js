@@ -56,7 +56,7 @@ const Header = ({ onMenuPress, onSearchPress, name = 'Misafir', navigation }) =>
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('MasalGeneratePage')}
+            onPress={() => navigation.navigate('Masal Oluştur')}
           >
             <Text style={styles.buttonText}>Başla</Text>
           </TouchableOpacity>
