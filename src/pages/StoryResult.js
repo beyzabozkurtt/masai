@@ -1,15 +1,16 @@
-
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { API_URL } from '@env';
+
 export default function StoryResult({ route, navigation }) {
   const {
-    id, // 👈 masal ID'si gönderilmiş mi kontrol ediyoruz
+    id,
     title: routeTitle,
     fullStory: routeStory,
     author: routeAuthor,
     theme: routeTheme,
     characters: routeCharacters,
+    imageUrl: routeImageUrl,   // burası
   } = route.params;
 
   const [storyData, setStoryData] = useState({
@@ -18,9 +19,10 @@ export default function StoryResult({ route, navigation }) {
     author: routeAuthor || 'Bilinmeyen',
     theme: routeTheme || null,
     characters: routeCharacters || [],
+    imageUrl: routeImageUrl || null,  // ekledik
   });
 
-  const [loading, setLoading] = useState(!routeStory); // eğer fullStory yoksa fetch'e ihtiyaç var
+  const [loading, setLoading] = useState(!routeStory);
 
   useEffect(() => {
     const fetchStoryIfNeeded = async () => {
@@ -34,6 +36,7 @@ export default function StoryResult({ route, navigation }) {
             author: data.userRef?.name || 'Bilinmeyen',
             theme: data.theme || null,
             characters: data.characters || [],
+            imageUrl: data.imageUrl || null,  // backend’den çek
           });
         } catch (err) {
           console.error('Masal detayları alınamadı:', err);
@@ -59,6 +62,14 @@ export default function StoryResult({ route, navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{storyData.title}</Text>
+
+      {storyData.imageUrl && (
+        <Image
+          source={{ uri: storyData.imageUrl }}
+          style={styles.storyImage}
+          resizeMode="contain"
+        />
+      )}
 
       <Text style={styles.subtitle}>Yazan: {storyData.author}</Text>
       {storyData.theme && <Text style={styles.subtitle}>Tema: {storyData.theme}</Text>}
@@ -98,6 +109,12 @@ const styles = StyleSheet.create({
     color: '#6c63ff',
     marginBottom: 10,
     textAlign: 'center',
+  },
+  storyImage: {
+    width: '100%',
+    height: 250,
+    borderRadius: 15,
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 15,

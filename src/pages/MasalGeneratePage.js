@@ -40,14 +40,14 @@ const MasalGeneratePage = ({ route, navigation }) => {
           setCharacterInput('');
         }
       };
-      const handleGenerateStory = async () => {
+     const handleGenerateStory = async () => {
   if (!title || !starter || !selectedTheme || characters.length === 0) {
     Alert.alert("Eksik Bilgi", "Tüm alanları doldurmalısın!");
     return;
   }
 
   try {
-    setIsGenerating(true); // 🔄 Yükleme başlasın
+    setIsGenerating(true);
     const token = await AsyncStorage.getItem('token');
     const response = await axios.post(
       `${API_URL}/ai/generate`,
@@ -66,20 +66,27 @@ const MasalGeneratePage = ({ route, navigation }) => {
       }
     );
 
-    const fullStory = response.data.fullStory;
-    navigation.navigate('StoryResult', {
-      fullStory,
-      title,
-      characters,
-      theme: selectedTheme,
+    const { fullStory, imageUrl } = response.data;  // imageUrl burada
+
+    navigation.navigate('HomeStack', {
+      screen: 'StoryResult',
+      params: {
+        fullStory,
+        title,
+        characters,
+        theme: selectedTheme,
+        imageUrl,
+        author: username,
+      },
     });
   } catch (err) {
     Alert.alert("Hata", "Masal oluşturulurken bir sorun oluştu.");
     console.error(err);
   } finally {
-    setIsGenerating(false); // ✅ Yükleme bitti
+    setIsGenerating(false);
   }
 };
+
       const handleNextStep = () => {
         if (currentStep === 1 && !selectedTheme) {
           Alert.alert('Hata', 'Lütfen bir tema seçin!');
@@ -316,7 +323,7 @@ const MasalGeneratePage = ({ route, navigation }) => {
 {isGenerating && (
   <View style={{ alignItems: 'center', marginVertical: 20 }}>
     <ActivityIndicator size="large" color="#6c63ff" />
-    <Text style={{ marginTop: 10, fontFamily: 'ms-regular', fontSize: 16, color: '#6c63ff' }}>
+    <Text style={{ marginTop: -10, fontFamily: 'ms-regular', fontSize: 16, color: '#6c63ff' }}>
       Masalın oluşturuluyor, biraz bekle...
     </Text>
   </View>
@@ -411,7 +418,7 @@ const styles = StyleSheet.create({
     },
     characterBox: {
         width: 170,
-        height: 120,
+        height: 100,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 30,
