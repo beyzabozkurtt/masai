@@ -6,9 +6,12 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const windowWidth = Dimensions.get('window').width;
 
 const Header = ({ onMenuPress, onSearchPress, name = 'Misafir', navigation }) => {
   const handleLogout = async () => {
@@ -45,19 +48,30 @@ const Header = ({ onMenuPress, onSearchPress, name = 'Misafir', navigation }) =>
       </View>
 
       {/* Altındaki Sarı Alan */}
-      <View style={styles.header}>
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>Yapay Zekayla kendi Masalını Oluştur!</Text>
+      <View style={[styles.header, { padding: windowWidth * 0.07 }]}>
+        <View style={[styles.textContainer, { maxWidth: windowWidth * 0.55 }]}>
+          <Text style={styles.title}>
+            Yapay Zekayla kendi Masalını Oluştur!
+          </Text>
 
-          <TouchableOpacity style={styles.button}
-          onPress={() => navigation.navigate('MasalGeneratePage')}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('MasalGeneratePage')}
+          >
             <Text style={styles.buttonText}>Başla</Text>
           </TouchableOpacity>
         </View>
 
         <Image
           source={require('../assets/images/star.png')}
-          style={styles.starImage}
+          style={[
+            styles.starImage,
+            {
+              width: windowWidth * 0.4,
+              height: windowWidth * 0.4,
+              right: -windowWidth * 0.07,
+            },
+          ]}
         />
       </View>
     </View>
@@ -73,7 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     marginBottom: 2,
-    marginTop: 30,
+    marginTop: 50,
   },
   leftSide: {
     flexDirection: 'row',
@@ -98,11 +112,11 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#FFA500',
     borderRadius: 18,
-    padding: 35,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    margin:5
+    margin: 5,
+    position: 'relative',
   },
   textContainer: {
     flex: 1,
@@ -110,10 +124,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#fff',
-    fontSize: 27,
+    fontSize: 25,
     fontFamily: 'ms-bold',
     marginBottom: 10,
-    maxWidth: 250,
   },
   button: {
     backgroundColor: '#fff',
@@ -121,7 +134,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 35,
     borderRadius: 15,
     alignSelf: 'flex-start',
-    bottom: -20,
+    bottom: 0,
   },
   buttonText: {
     color: '#6c63ff',
@@ -129,12 +142,10 @@ const styles = StyleSheet.create({
     fontFamily: 'ms-bold',
   },
   starImage: {
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
     position: 'absolute',
-    right: -30,
-    bottom: 25,
+    bottom: 30,
+    resizeMode: 'contain',
+    left: 200,
   },
 });
 

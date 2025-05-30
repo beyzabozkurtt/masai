@@ -1,37 +1,40 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+
+const windowWidth = Dimensions.get('window').width;
 
 const Blog = () => {
     return (
         <View style={styles.container}>
             {/* Başlık ve İkon */}
             <View style={styles.header}>
-                <Ionicons name="book-outline" size={24} color="#000" />
-                <Text style={styles.title}>Blog</Text>
+                <Ionicons name="sparkles-outline" size={22} color="#6c63ff" />
+                <Text style={styles.title}>Masal Dünyası</Text>
             </View>
 
             {/* İçerik */}
             <Text style={styles.content}>
-                 MasAI ile yaratıcılığınızı keşfedin. Masallarınızı oluşturarak hayal dünyanızı genişletin!
+                MasAI ile kendi masal evrenini oluştur! Karakterlerini seç, temanı belirle ve yapay zekâ ile bambaşka bir hikâye yaz. 
+                Hayal gücünün sınırlarını zorla — çünkü bu dünya senin!
             </Text>
-
-
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 20,
+        width: windowWidth - 30, // kenarlardan boşluk bırak
+        alignSelf: 'center',
+        marginVertical: 15,
         padding: 15,
-        backgroundColor: '#e8f5e9',
-        borderRadius: 15, // Daha yuvarlak kenarlar
+        backgroundColor: '#f0f0f0',
+        borderRadius: 15,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 3, // Android için gölge
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+        elevation: 3,
     },
     header: {
         flexDirection: 'row',
@@ -41,22 +44,15 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontFamily: 'ms-bold',
-        color: '#000400',
-        marginLeft: 8, // İkon ile başlık arasına boşluk
+        color: '#6c63ff',
+        marginLeft: 8,
     },
     content: {
         fontSize: 14,
-        color: '#555',
-        lineHeight: 20, // Yazılar arasına boşluk
-        marginBottom: 10, // Yazı ile footer arasına boşluk
+        color: '#333',
+        lineHeight: 22,
         fontFamily: 'ms-regular',
     },
-    footer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-    },
-
 });
 
 export default Blog;
