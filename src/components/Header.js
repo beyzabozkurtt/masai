@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const windowWidth = Dimensions.get('window').width;
 
 const Header = ({ onMenuPress, onSearchPress, name = 'Misafir', navigation }) => {
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
   const handleLogout = async () => {
     Alert.alert('Çıkış Yap', 'Çıkış yapmak istediğine emin misin?', [
       { text: 'İptal', style: 'cancel' },
@@ -28,12 +34,25 @@ const Header = ({ onMenuPress, onSearchPress, name = 'Misafir', navigation }) =>
     ]);
   };
 
+  const handleMenuItemPress = (action) => {
+    setMenuVisible(false);
+    if (action === 'profile') {
+      navigation.navigate('Profile');
+    } else if (action === 'myStories') {
+      navigation.navigate('Masallarım');
+    } else if (action === 'help') {
+      Alert.alert('Yardım', 'Yardım sayfası yakında!');
+    } else if (action === 'logout') {
+      handleLogout();
+    }
+  };
+
   return (
     <View>
       {/* Üstteki Beyaz Alan */}
       <View style={styles.topBar}>
         <View style={styles.leftSide}>
-          <TouchableOpacity onPress={onMenuPress} style={styles.iconLeft}>
+          <TouchableOpacity onPress={toggleMenu} style={styles.iconLeft}>
             <Ionicons name="grid-outline" size={24} color="#6c63ff" />
           </TouchableOpacity>
 
@@ -41,18 +60,83 @@ const Header = ({ onMenuPress, onSearchPress, name = 'Misafir', navigation }) =>
             Hoş geldin, <Text style={styles.nameBar}>{name}</Text> 👋
           </Text>
         </View>
-
-        <TouchableOpacity onPress={handleLogout} style={styles.iconRight}>
-          <Ionicons name="log-out-outline" size={24} color="#ff4d4d" />
-        </TouchableOpacity>
       </View>
+
+      {/* Menü */}
+      {menuVisible && (
+        <View style={styles.menuContainer}>
+          <TouchableOpacity
+            onPress={() => handleMenuItemPress('profile')}
+            style={styles.menuItemTouchable}
+          >
+            <View style={styles.menuItemRow}>
+              <Ionicons
+                name="person-outline"
+                size={18}
+                color="#6c63ff"
+                style={styles.menuIcon}
+              />
+              <Text style={styles.menuItem}>Profil</Text>
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            onPress={() => handleMenuItemPress('myStories')}
+            style={styles.menuItemTouchable}
+          >
+            <View style={styles.menuItemRow}>
+              <Ionicons
+                name="book-outline"
+                size={18}
+                color="#6c63ff"
+                style={styles.menuIcon}
+              />
+              <Text style={styles.menuItem}>Masallarım</Text>
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            onPress={() => handleMenuItemPress('help')}
+            style={styles.menuItemTouchable}
+          >
+            <View style={styles.menuItemRow}>
+              <Ionicons
+                name="help-circle-outline"
+                size={18}
+                color="#6c63ff"
+                style={styles.menuIcon}
+              />
+              <Text style={styles.menuItem}>Yardım</Text>
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            onPress={() => handleMenuItemPress('logout')}
+            style={[styles.menuItemTouchable, styles.logoutButton]}
+          >
+            <View style={styles.menuItemRow}>
+              <Ionicons
+                name="log-out-outline"
+                size={18}
+                color="#ff4d4d"
+                style={styles.menuIcon}
+              />
+              <Text style={[styles.menuItem, styles.logoutText]}>Çıkış Yap</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Altındaki Sarı Alan */}
       <View style={[styles.header, { padding: windowWidth * 0.07 }]}>
         <View style={[styles.textContainer, { maxWidth: windowWidth * 0.55 }]}>
-          <Text style={styles.title}>
-            Yapay Zekayla kendi Masalını Oluştur!
-          </Text>
+          <Text style={styles.title}>Yapay Zekayla kendi Masalını Oluştur!</Text>
 
           <TouchableOpacity
             style={styles.button}
@@ -106,9 +190,6 @@ const styles = StyleSheet.create({
     fontFamily: 'ms-bold',
     color: '#6c63ff',
   },
-  iconRight: {
-    padding: 5,
-  },
   header: {
     backgroundColor: '#FFA500',
     borderRadius: 18,
@@ -146,6 +227,48 @@ const styles = StyleSheet.create({
     bottom: 30,
     resizeMode: 'contain',
     left: 200,
+  },
+
+  // Menü stilleri
+  menuContainer: {
+    position: 'absolute',
+    top: 110,
+    left: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    height:210,
+    width:180,
+    zIndex: 999,
+  },
+  menuItemTouchable: {
+    paddingVertical: 8,
+  },
+  menuItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',  // Sola hizalama
+  },
+  menuIcon: {
+    marginRight: 10,
+  },
+  menuItem: {
+    fontSize: 14,
+    fontFamily: 'ms-regular',
+    color: '#333',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#ddd',
+    marginVertical: 5,
+  },
+  logoutButton: {
+    marginTop: 10,
+  },
+  logoutText: {
+    color: '#ff4d4d',
+    fontWeight: 'bold',
   },
 });
 
