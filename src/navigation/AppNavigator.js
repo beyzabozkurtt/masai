@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
 import { View, ActivityIndicator } from 'react-native';
-
+import { DefaultTheme } from '@react-navigation/native';
 // Pages
 import SplashScreen from '../pages/SplashScreen';
 import HomePage from '../pages/HomePage';
@@ -14,10 +14,17 @@ import StoryResult from '../pages/StoryResult';
 import StoryDetail from '../pages/StoryDetail'; // ✅ Yeni sayfa eklendi
 import PublicStoriesPage from '../pages/PublicStoriesPage';
 import CategoryStoriesPage from '../pages/CategoryStoriesPage';
-
+import BottomTabs from './BottomTabs';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
+  const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#fff', // ✅ Arka plan beyaz
+  },
+};
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const loadFonts = async () => {
@@ -43,7 +50,7 @@ const AppNavigator = () => {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
           name="Splash"
@@ -62,7 +69,7 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="Home"
-          component={HomePage}
+          component={BottomTabs}
           options={{
             headerShown: false,
             gestureEnabled: false,
