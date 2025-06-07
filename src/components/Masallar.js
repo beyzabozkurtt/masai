@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
+
 
 const windowWidth = Dimensions.get('window').width;
 const cardWidth = windowWidth * 0.35;
@@ -11,7 +12,7 @@ const Masallar = ({ navigation }) => {
   useEffect(() => {
     const fetchMasallar = async () => {
       try {
-        const response = await fetch('https://masal-backend-on7u.onrender.com/story/top-stories?limit=3');
+        const response = await fetch('https://masal-backend-on7u.onrender.com/story/public-stories?limit=3');
         const data = await response.json();
         console.log('GELEN MASALLAR:', JSON.stringify(data, null, 2));
 
@@ -58,10 +59,20 @@ const Masallar = ({ navigation }) => {
             }
           >
             <View style={styles.plusBox}>
-              <Text style={styles.plusText}>
-                {masal._id === 'see-all' ? '+' : '📘'}
-              </Text>
+              {masal._id === 'see-all' ? (
+                  <Text style={styles.plusText}>+</Text>
+              ) : masal.imageUrl ? (
+                  <Image
+                      source={{ uri: encodeURI(masal.imageUrl.trim()) }}
+                      style={styles.image}
+                      resizeMode="cover"
+                      onError={() => console.log('Resim yüklenemedi:', masal.title)}
+                  />
+              ) : (
+                  <Text style={styles.plusText}>📘</Text>
+              )}
             </View>
+
             <Text style={styles.text}>
               {masal._id === 'see-all' ? 'Tüm Masalları Gör' : masal.title}
             </Text>
@@ -133,6 +144,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'ms-light',
   },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+  },
+
 });
 
 export default Masallar;

@@ -12,6 +12,7 @@ import axios from 'axios';
 import { API_URL } from '@env';
 
 
+
 export default function CategoryStoriesPage({ route, navigation }) {
   const { theme } = route.params;
   const [stories, setStories] = useState([]);
@@ -21,43 +22,61 @@ export default function CategoryStoriesPage({ route, navigation }) {
     try {
       setLoading(true);
       const response = await axios.get(`${API_URL}/story/public-stories`, {
-        params: { theme },
+        params: { theme: theme.trim() },
       });
+
+      // 🔍 Buraya log ekliyoruz
+      console.log('Gelen masalların sıralaması (test):');
+      response.data.forEach((story, index) => {
+        console.log(`${index + 1}. ${story.title} - ${story.createdAt}`);
+      });
+
       setStories(response.data);
     } catch (err) {
-      console.error('Masallar getirilemedi:', err);
+      console.error('Masallar getirilemedi:', err?.response?.data || err.message || err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchStories();
-  }, []);
-
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() =>
-        navigation.navigate('StoryDetail', {
-          title: item.title || 'Başlık yok',
-          theme: item.theme || 'Tema yok',
-          likesCount: item.likesCount || 0,
-          fullStory: item.fullStory || 'Masal içeriği bulunamadı.',
-          characters: Array.isArray(item.characters) ? item.characters : ['Belirtilmemiş'],
-        })
-      }
-    >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.meta}>Tema: {item.theme}</Text>
-      <Text style={styles.meta}>Beğeni: {item.likesCount}</Text>
+      <TouchableOpacity
+          style={styles.card}
+          onPress={() =>
+              navigation.navigate('StoryDetail', {
+                title: item.title || 'Başlık yok',
+                theme: item.theme || 'Tema yok',
+                likesCount: item.likesCount || 0,
+                fullStory: item.fullStory || 'Masal içeriği bulunamadı.',
+                characters: Array.isArray(item.characters) ? item.characters : ['Belirtilmemiş'],
+                imageUrl: item.imageUrl || null,
+                author: item.userRef?.name || 'Bilinmeyen'
+              })
+          }
+      >
+        {/* GÖRSEL */}
+        {item.imageUrl && (
+            <View style={{ alignItems: 'center', marginBottom: 10 }}>
+              <Image
+                  source={{ uri: item.imageUrl }}
+                  style={{ width: 100, height: 100, borderRadius: 12 }}
+                  resizeMode="cover"
+              />
+            </View>
+        )}
 
-      {item.fullStory && (
-        <Text style={styles.storyPreview} numberOfLines={4}>
-          {item.fullStory}
-        </Text>
-      )}
-    </TouchableOpacity>
+        {/* BAŞLIK */}
+        <Text style={styles.title}>{item.title}</Text>
+
+        {/* YAZAR */}
+        <Text style={styles.meta}>Yazar: {item.userRef?.name || 'Bilinmeyen'}</Text>
+
+        {/* TEMA */}
+        <Text style={styles.meta}>Tema: {item.theme}</Text>
+
+        {/* BEĞENİ */}
+        <Text style={styles.meta}>Beğeni: {item.likesCount}</Text>
+      </TouchableOpacity>
   );
 
   return (
