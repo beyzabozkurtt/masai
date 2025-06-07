@@ -59,6 +59,7 @@ const Masallar = ({ navigation }) => {
                       author: masal.userRef?.name || 'Bilinmeyen',
                       theme: masal.theme,
                       characters: masal.characters,
+                      imageUrl: masal.imageUrl || null,
                     },
                   })
             }

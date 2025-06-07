@@ -33,7 +33,7 @@ export default function LoginScreen({ navigation }) {
 
   try {
     setIsLoading(true); // Yüklenme başlasın
-    const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+    const response = await axios.post(`https://masal-backend-on7u.onrender.com/auth/login`, { email, password });
     const token = response.data.access_token;
     const name = response.data.name;
     await AsyncStorage.setItem('token', token);

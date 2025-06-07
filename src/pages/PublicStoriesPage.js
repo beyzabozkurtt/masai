@@ -55,13 +55,17 @@ export default function PublicStoriesPage({ navigation }) {
     <TouchableOpacity
       style={styles.card}
       onPress={() =>
-        navigation.navigate('StoryDetail', {
+        navigation.navigate('HomeStack', {
+        screen: 'StoryResult',
+        params: {
+          id: item._id,
           title: item.title || 'Başlık yok',
-          theme: item.theme || 'Tema yok',
-          likesCount: item.likesCount || 0,
           fullStory: item.fullStory || 'Masal içeriği bulunamadı.',
+          author: item.userRef?.name || 'Bilinmeyen',
+          theme: item.theme || 'Tema yok',
           characters: Array.isArray(item.characters) ? item.characters : ['Belirtilmemiş'],
-        })
+        },
+})
       }
       
     >
