@@ -18,6 +18,11 @@ const Masallar = ({ navigation }) => {
 
         if (Array.isArray(data)) {
           setMasallar(data);
+          // 💥 Buraya log ekle
+          data.forEach((masal) => {
+            console.log('MASAL GÖRSELİ:', masal.title, masal.imageUrl);
+          });
+
         } else {
           setMasallar([]);
         }
@@ -59,19 +64,20 @@ const Masallar = ({ navigation }) => {
             }
           >
             <View style={styles.plusBox}>
-              {masal._id === 'see-all' ? (
-                  <Text style={styles.plusText}>+</Text>
-              ) : masal.imageUrl ? (
+              {masal.imageUrl ? (
                   <Image
-                      source={{ uri: encodeURI(masal.imageUrl.trim()) }}
-                      style={styles.image}
+                      source={{ uri: masal.imageUrl }}
+                      style={styles.imageStyle}
                       resizeMode="cover"
                       onError={() => console.log('Resim yüklenemedi:', masal.title)}
                   />
               ) : (
-                  <Text style={styles.plusText}>📘</Text>
+                  <Text style={styles.plusText}>
+                    {masal._id === 'see-all' ? '+' : '📘'}
+                  </Text>
               )}
             </View>
+
 
             <Text style={styles.text}>
               {masal._id === 'see-all' ? 'Tüm Masalları Gör' : masal.title}
@@ -124,6 +130,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
+    overflow: 'hidden'
+
   },
   plusText: {
     fontSize: 36,
@@ -144,7 +152,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'ms-light',
   },
-  image: {
+
+  imageStyle: {
     width: '100%',
     height: '100%',
     borderRadius: 12,

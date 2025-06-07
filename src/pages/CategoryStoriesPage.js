@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+    Image,
 } from 'react-native';
 import axios from 'axios';
 
@@ -14,9 +15,19 @@ import { API_URL } from '@env';
 
 
 export default function CategoryStoriesPage({ route, navigation }) {
-  const { theme } = route.params;
+  const { theme } = route.params || {};
+
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!theme) {
+      console.warn('Tema bulunamadı.');
+      navigation.goBack();
+      return;
+    }
+    fetchStories();
+  }, []);
 
   const fetchStories = async () => {
     try {
