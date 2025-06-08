@@ -22,7 +22,29 @@ const MasalGeneratePage = ({ route, navigation }) => {
     const [isPublic, setIsPublic] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [username, setUsername] = useState('');
-    
+    const uploadToCloudinaryDirectly = async (blobUrl) => {
+        const blob = await fetch(blobUrl).then(res => res.blob());
+
+        const formData = new FormData();
+        formData.append('file', {
+            uri: blobUrl,
+            name: 'masal-gorsel.jpg',
+            type: 'image/jpeg',
+        });
+        formData.append('upload_preset', 'masal_unsigned'); // 👈 Cloudinary panelinde tanımladığın preset
+        // Eğer unsigned preset kullanıyorsan sadece bu yeterli.
+
+        const res = await fetch('https://api.cloudinary.com/v1_1/dilxc99ki/image/upload', {
+
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await res.json();
+        return data.secure_url;
+    };
+
+
     useEffect(() => {
     const fetchUsername = async () => {
       const name = await AsyncStorage.getItem('username');
@@ -40,54 +62,94 @@ const MasalGeneratePage = ({ route, navigation }) => {
           setCharacterInput('');
         }
       };
-     const handleGenerateStory = async () => {
-  if (!title || !starter || !selectedTheme || characters.length === 0) {
-    Alert.alert("Eksik Bilgi", "Tüm alanları doldurmalısın!");
-    return;
-  }
+    const handleGenerateStory = async () => {
+        if (!title || !starter || !selectedTheme || characters.length === 0) {
+            Alert.alert("Eksik Bilgi", "Tüm alanları doldurmalısın!");
+            return;
+        }
 
-  try {
-    setIsGenerating(true);
-    const token = await AsyncStorage.getItem('token');
-    const response = await axios.post(
-      `${API_URL}/ai/generate`,
-      {
-        title,
-        theme: selectedTheme,
-        characters,
-        starter,
-        isPublic,
-        author: username,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+        try {
+            setIsGenerating(true);
+            const token = await AsyncStorage.getItem('token');
 
-    const { fullStory, imageUrl } = response.data;  // imageUrl burada
+            // Masal ve blob URL’yi al
+            const response = await axios.post(
+                `${API_URL}/ai/generate`,
+                {
+                    title,
+                    theme: selectedTheme,
+                    characters,
+                    starter,
+                    isPublic,
+                    author: username,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
-    navigation.navigate('HomeStack', {
-      screen: 'StoryResult',
-      params: {
-        fullStory,
-        title,
-        characters,
-        theme: selectedTheme,
-        imageUrl,
-        author: username,
-      },
-    });
-  } catch (err) {
-    Alert.alert("Hata", "Masal oluşturulurken bir sorun oluştu.");
-    console.error(err);
-  } finally {
-    setIsGenerating(false);
-  }
-};
+            const { fullStory, imageUrl: blobUrl } = response.data;
 
-      const handleNextStep = () => {
+            // 👇 Cloudinary upload fonksiyonunu burada tanımla
+            const uploadToCloudinaryDirectly = async (blobUrl) => {
+                try {
+                    const blob = await fetch(blobUrl).then(res => res.blob());
+
+                    const formData = new FormData();
+                    formData.append('file', {
+                        uri: blobUrl,
+                        name: 'masal-gorsel.jpg',
+                        type: 'image/jpeg',
+                    });
+                    formData.append('upload_preset', 'masal_unsigned');
+
+                    const res = await fetch('https://api.cloudinary.com/v1_1/dlixc99ki/image/upload', {
+
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    const data = await res.json();
+                    console.log("✅ Cloudinary yanıtı:", data);
+                    return data.secure_url;
+                } catch (err) {
+                    console.error("❌ Cloudinary upload hatası:", err);
+                    return null;
+                }
+            };
+
+            // ✅ Şimdi fonksiyonu çağır ve sonucu al
+            const cloudinaryUrl = await uploadToCloudinaryDirectly(blobUrl);
+
+            if (!cloudinaryUrl) {
+                Alert.alert("Hata", "Görsel Cloudinary'e yüklenemedi.");
+                return;
+            }
+
+            // ✅ Masalı ve kalıcı görsel URL’sini gönder
+            navigation.navigate('HomeStack', {
+                screen: 'StoryResult',
+                params: {
+                    fullStory,
+                    title,
+                    characters,
+                    theme: selectedTheme,
+                    imageUrl: cloudinaryUrl,
+                    author: username,
+                },
+            });
+
+        } catch (err) {
+            Alert.alert("Hata", "Masal oluşturulurken bir sorun oluştu.");
+            console.error(err);
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const handleNextStep = () => {
         if (currentStep === 1 && !selectedTheme) {
           Alert.alert('Hata', 'Lütfen bir tema seçin!');
           return;
