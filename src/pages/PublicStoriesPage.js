@@ -32,18 +32,47 @@ export default function PublicStoriesPage({ navigation }) {
       const response = await axios.get(`${API_URL}/story/public-stories`, {
         params: theme ? { theme } : {},
       });
-      console.log('Gelen veri:', response.data); 
-      setStories(response.data);
+
+      let data = response.data;
+      if (!Array.isArray(data)) data = [];
+
+      // ✅ Sadece Cloudinary görseli olanları al
+      const cloudinaryOnly = data.filter(
+          (story) =>
+              typeof story.imageUrl === 'string' &&
+              story.imageUrl.includes('res.cloudinary.com')
+      );
+
+      // ✅ Aynı `title`'a sahip masallardan sadece en yeni olanı al
+      const latestByTitle = {};
+      for (const story of cloudinaryOnly) {
+        const existing = latestByTitle[story.title];
+        const currentTime = new Date(story.createdAt).getTime();
+        const existingTime = existing ? new Date(existing.createdAt).getTime() : 0;
+
+        if (!existing || currentTime > existingTime) {
+          latestByTitle[story.title] = story;
+        }
+      }
+
+      const uniqueStories = Object.values(latestByTitle);
+      setStories(uniqueStories);
+
+      // ✅ Debug
+      console.log('✅ En güncel masallar:', uniqueStories.map(s => s.title));
     } catch (err) {
-      console.error('Masallar getirilemedi:', err);
+      console.error('❌ Masallar getirilemedi:', err);
+      setStories([]);
     } finally {
       setLoading(false);
     }
   };
 
+// ✅ useEffect içinde çağır
   useEffect(() => {
     fetchStories();
   }, []);
+
 
   const handleThemeSelect = (theme) => {
     const newTheme = selectedTheme === theme ? '' : theme;
