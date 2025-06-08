@@ -30,10 +30,10 @@ const MasalGeneratePage = ({ route, navigation }) => {
             const formData = new FormData();
             formData.append('file', {
                 uri: blobUrl,
-                name: 'masal-gorsel.jpg',
-                type: 'image/jpeg',
+                name: 'masal-gorsel',
+                type: blob.type || 'image/jpeg',
             });
-            formData.append('upload_preset', 'masal_unsigned'); // unsigned preset
+            formData.append('upload_preset', 'masal_unsigned');
 
             const res = await fetch('https://api.cloudinary.com/v1_1/dlixc99ki/image/upload', {
                 method: 'POST',
@@ -55,6 +55,7 @@ const MasalGeneratePage = ({ route, navigation }) => {
             return null;
         }
     };
+
 
 
 
@@ -108,16 +109,25 @@ const MasalGeneratePage = ({ route, navigation }) => {
             );
 
             const { fullStory, imageUrl: blobUrl } = response.data;
+            console.log("🔥 AI'dan gelen blob:", blobUrl);
 
-            // 2. Cloudinary’e yükle
-            const cloudinaryUrl = await uploadToCloudinaryDirectly(blobUrl);
+            let cloudinaryUrl = await uploadToCloudinaryDirectly(blobUrl);
 
-            if (!cloudinaryUrl) {
-                Alert.alert("Hata", "Görsel Cloudinary'e yüklenemedi.");
+// cloudinaryUrl hem null/undefined hem de blob: olabilir
+            if (
+                !cloudinaryUrl ||
+                typeof cloudinaryUrl !== 'string' ||
+                cloudinaryUrl.startsWith('blob:') ||
+                !cloudinaryUrl.startsWith('https://res.cloudinary.com')
+            ) {
+                Alert.alert("Hata", "Geçerli bir Cloudinary görseli alınamadı.");
+                console.warn("❌ Hatalı cloudinaryUrl:", cloudinaryUrl);
                 return;
             }
-            console.log("MASAL GÖRSELİ:", title, cloudinaryUrl);
-            // 3. Sadece Cloudinary URL ile story POST at
+
+
+
+
             await axios.post(
                 `${API_URL}/story`,
                 {
@@ -127,7 +137,6 @@ const MasalGeneratePage = ({ route, navigation }) => {
                     starter,
                     fullStory,
                     imageUrl: cloudinaryUrl,
-                    author: username,
                     isPublic,
                 },
                 {

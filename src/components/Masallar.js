@@ -12,20 +12,27 @@ const Masallar = ({ navigation }) => {
   useEffect(() => {
     const fetchMasallar = async () => {
       try {
-        const response = await fetch('https://masal-backend-on7u.onrender.com/story/public-stories?limit=3');
+        const response = await fetch('https://masal-backend-on7u.onrender.com/story/public-stories?limit=10');
         const data = await response.json();
-        console.log('GELEN MASALLAR:', JSON.stringify(data, null, 2));
 
-        if (Array.isArray(data)) {
-          setMasallar(data);
-          // 💥 Buraya log ekle
-          data.forEach((masal) => {
-            console.log('MASAL GÖRSELİ:', masal.title, masal.imageUrl);
-          });
+        // 🔍 Sadece geçerli Cloudinary görselleri filtrele
+        const filtered = Array.isArray(data)
+            ? data.filter(
+                masal =>
+                    masal.imageUrl &&
+                    typeof masal.imageUrl === 'string' &&
+                    masal.imageUrl.startsWith('https://res.cloudinary.com')
+            )
+            : [];
 
-        } else {
-          setMasallar([]);
-        }
+        // 🔢 En fazla 3 tane göster
+        const firstThree = filtered.slice(0, 3);
+        setMasallar(firstThree);
+
+        firstThree.forEach((masal) => {
+          console.log('✅ MASAL:', masal.title, masal.imageUrl);
+        });
+
       } catch (error) {
         console.error('Masallar alınamadı:', error);
         setMasallar([]);
@@ -34,6 +41,7 @@ const Masallar = ({ navigation }) => {
 
     fetchMasallar();
   }, []);
+
 
   return (
     <View style={styles.container}>

@@ -72,23 +72,35 @@ const handleLike = async (storyId) => {
     fetchStories();
   }, []);
 
-const fetchStories = async () => {
-  try {
-    setLoading(true);
-    const token = await AsyncStorage.getItem('token');
-    const response = await axios.get(`http://10.102.68.141:3000/story/public-stories`, {
-      params: { theme: theme.trim() },
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const fetchStories = async () => {
+    const start = Date.now(); // ⏱ Başlangıç zamanı
+    console.log('🟡 fetchStories başladı');
+
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.get(`https://masal-backend-on7u.onrender.com/story/public-stories`, {
+        params: { theme: theme.trim() },
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 15000,
+      });
+
+
+      const end = Date.now(); // ⏱ Bitiş zamanı
+      console.log('✅ fetchStories tamamlandı. Geçen süre:', end - start, 'ms');
+
 
     // Gelen her story için likesCount ve liked alanlarının kesin olduğundan emin ol
-    const storiesWithLikes = response.data.map(story => ({
-      ...story,
-      likesCount: story.likesCount || 0,
-      liked: !!story.liked,  // kesin boolean
-    }));
+      const storiesWithLikes = response.data
+          .filter(story => story.imageUrl?.includes('cloudinary.com')) // 👈 Yalnızca Cloudinary’li
+          .map(story => ({
+            ...story,
+            likesCount: story.likesCount || 0,
+            liked: !!story.liked,
+          }));
 
-    setStories(storiesWithLikes);
+
+      setStories(storiesWithLikes);
 
     // likedItems için kesin boolean dönüşüm
     const likedMap = {};
