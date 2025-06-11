@@ -62,13 +62,19 @@ const MasalGeneratePage = ({ route, navigation }) => {
 
 
     useEffect(() => {
-    const fetchUsername = async () => {
-      const name = await AsyncStorage.getItem('username');
-      setUsername(name || 'Bilinmeyen');
-    };
-    fetchUsername();
-  }, []);
+  const fetchUsername = async () => {
+    try {
+      const storedName = await AsyncStorage.getItem('username');
+      if (storedName) {
+        setUsername(storedName);
+      }
+    } catch (error) {
+      console.error('Kullanıcı adı alınamadı:', error);
+    }
+  };
 
+  fetchUsername();
+}, []);
 
 
     const addCharacter = () => {
@@ -78,6 +84,12 @@ const MasalGeneratePage = ({ route, navigation }) => {
           setCharacterInput('');
         }
       };
+      const removeCharacter = (name) => {
+  setCharacters(prev => prev.filter(c => c !== name));
+};
+
+
+
     // Masal oluşturma fonksiyonu
 
 
@@ -158,6 +170,7 @@ const MasalGeneratePage = ({ route, navigation }) => {
                     theme: selectedTheme,
                     imageUrl: cloudinaryUrl,
                     author: username,
+
                 },
             });
 
@@ -325,12 +338,15 @@ const MasalGeneratePage = ({ route, navigation }) => {
     </TouchableOpacity>
 
     <View style={styles.characterTagContainer}>
-      {characters.map((char, index) => (
-        <View key={index} style={styles.characterTag}>
-          <Text style={styles.characterTagText}>{char}</Text>
-        </View>
-      ))}
-    </View>
+  {characters.map((char, index) => (
+    <View key={index} style={styles.characterTag}>
+  <TouchableOpacity onPress={() => removeCharacter(char)} style={{ marginRight: 4 }}>
+    <Ionicons name="close-circle" size={18} color="#6c63ff" />
+  </TouchableOpacity>
+  <Text style={styles.characterTagText}>{char}</Text>
+</View>
+  ))}
+</View>
 
     <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.buttonBack} onPress={handlePreviousStep}>
@@ -700,12 +716,15 @@ const styles = StyleSheet.create({
       },
       
       characterTag: {
-        backgroundColor: '#eae8ff',
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-        borderRadius: 20,
-        margin: 5,
-      },
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#eae8ff',
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  borderRadius: 20,
+  margin: 5,
+},
+
       
       characterTagText: {
         fontFamily: 'ms-regular',
