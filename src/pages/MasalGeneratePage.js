@@ -208,6 +208,9 @@ const MasalGeneratePage = ({ route, navigation }) => {
         { name: 'hayvanlar', label: 'Hayvanlar' },
         { name: 'aile', label: 'Aile' },
         { name: 'sihir', label: 'Sihir' },
+        { name: 'keşif', label: 'Keşif' },
+
+
     ]; 
 
     return (
