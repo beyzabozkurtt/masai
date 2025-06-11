@@ -107,14 +107,10 @@ export default function StoryResult({ route, navigation }) {
 
         <Text style={styles.subtitle}>Yazan: {storyData.author}</Text>
         {storyData.theme && <Text style={styles.subtitle}>Tema: {storyData.theme}</Text>}
-        {storyData.characters.length > 0 && (
-            <Text style={styles.subtitle}>
-              Karakterler: {storyData.characters.join(', ')}
-            </Text>
-        )}
+        
 
         <Text style={styles.story}>
-          {storyData.fullStory || 'Masal içeriği bulunamadı.'}
+        {storyData.fullStory || 'Masal içeriği bulunamadı.'}
         </Text>
 
         {/* 💜 Beğeni Butonu */}
