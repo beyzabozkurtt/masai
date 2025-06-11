@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -95,7 +96,11 @@ const handleRegister = async () => {
           />
         </TouchableOpacity>
       </View>
-        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <TouchableOpacity style={styles.button} 
+        onPress={() => {
+          Keyboard.dismiss(); // ✅ Klavyeyi önce kapat
+          handleRegister();      // 🔐 Sonra giriş işlemini başlat
+        }}>
           <Text style={styles.buttonText}>Kayıt Ol</Text>
         </TouchableOpacity>
 

@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -26,6 +27,7 @@ export default function LoginScreen({ navigation }) {
 
 
   const handleLogin = async () => {
+
   if (!email || !password) {
     Alert.alert('Eksik Bilgi', 'Lütfen e-posta ve şifrenizi girin.');
     return;
@@ -85,7 +87,11 @@ export default function LoginScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} 
+        onPress={() => {
+          Keyboard.dismiss(); // ✅ Klavyeyi önce kapat
+          handleLogin();      // 🔐 Sonra giriş işlemini başlat
+        }}>
           <Text style={styles.buttonText}>Giriş Yap</Text>
         </TouchableOpacity>
 

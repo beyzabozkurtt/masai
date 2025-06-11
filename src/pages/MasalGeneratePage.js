@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Alert,TextInput,Keyboa
     Platform,
     TouchableWithoutFeedback,
     Keyboard,
-    ActivityIndicator } from 'react-native';
+    ActivityIndicator,
+    ScrollView
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Tik ikonu için
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -210,10 +212,14 @@ const MasalGeneratePage = ({ route, navigation }) => {
 
     return (
     <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  >
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.container}>
             <View style={styles.stepContainer}>
                 {/* İlk Step */}
@@ -402,15 +408,16 @@ const MasalGeneratePage = ({ route, navigation }) => {
   
 )}
 {isGenerating && (
-  <View style={{ alignItems: 'center', marginVertical: 20 }}>
+  <View style={{ alignItems: 'center', marginVertical: -10 }}>
     <ActivityIndicator size="large" color="#6c63ff" />
-    <Text style={{ marginTop: -10, fontFamily: 'ms-regular', fontSize: 16, color: '#6c63ff' }}>
+    <Text style={{ marginTop: 10, fontFamily: 'ms-regular', fontSize: 16, color: '#6c63ff' }}>
       Masalın oluşturuluyor, biraz bekle...
     </Text>
   </View>
 )}
 
         </View>
+        </ScrollView>
         </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     );

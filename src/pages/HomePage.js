@@ -23,11 +23,13 @@ const HomePage = ({ navigation }) => {
     }
   };
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await fetchUserName();
-    setRefreshing(false);
-  }, []);
+const onRefresh = useCallback(async () => {
+  setRefreshing(true);
+  await fetchUserName();
+  // Gerekirse başka verileri de yeniden yükle
+  setTimeout(() => setRefreshing(false), 1000); // 1 saniye sonra spinner'ı kapat
+}, []);
+
 
   useEffect(() => {
     fetchUserName();
@@ -47,7 +49,7 @@ const HomePage = ({ navigation }) => {
     >
       <Header name={userName} navigation={navigation} />
       <Categories navigation={navigation} />
-      <Masallar navigation={navigation} />
+      <Masallar navigation={navigation} refreshFlag={refreshing} />
       <Blog />
     </ScrollView>
   );

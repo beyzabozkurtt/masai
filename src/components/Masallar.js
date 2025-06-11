@@ -6,41 +6,48 @@ const windowWidth = Dimensions.get('window').width;
 const cardWidth = windowWidth * 0.35;
 const cardHeight = cardWidth * 1.5;
 
-const Masallar = ({ navigation }) => {
-  const [masallar, setMasallar] = useState([]);
+const Masallar = ({ navigation,refreshFlag }) => {
+   const [masallar, setMasallar] = useState([]);
+
+  const fetchMasallar = async () => {
+    try {
+      const response = await fetch('https://masal-backend-on7u.onrender.com/story/public-stories?limit=10');
+      const data = await response.json();
+
+      const filtered = Array.isArray(data)
+        ? data.filter(
+            masal =>
+              masal.imageUrl &&
+              typeof masal.imageUrl === 'string' &&
+              masal.imageUrl.startsWith('https://res.cloudinary.com')
+          )
+        : [];
+
+      const firstThree = filtered.slice(0, 3);
+      setMasallar(firstThree);
+
+      firstThree.forEach((masal) => {
+        console.log('✅ MASAL:', masal.title, masal.imageUrl);
+      });
+
+    } catch (error) {
+      console.error('Masallar alınamadı:', error);
+      setMasallar([]);
+    }
+  };
 
   useEffect(() => {
-    const fetchMasallar = async () => {
-      try {
-        const response = await fetch('https://masal-backend-on7u.onrender.com/story/public-stories?limit=10');
-        const data = await response.json();
-
-        // 🔍 Sadece geçerli Cloudinary görselleri filtrele
-        const filtered = Array.isArray(data)
-            ? data.filter(
-                masal =>
-                    masal.imageUrl &&
-                    typeof masal.imageUrl === 'string' &&
-                    masal.imageUrl.startsWith('https://res.cloudinary.com')
-            )
-            : [];
-
-        // 🔢 En fazla 3 tane göster
-        const firstThree = filtered.slice(0, 3);
-        setMasallar(firstThree);
-
-        firstThree.forEach((masal) => {
-          console.log('✅ MASAL:', masal.title, masal.imageUrl);
-        });
-
-      } catch (error) {
-        console.error('Masallar alınamadı:', error);
-        setMasallar([]);
-      }
-    };
-
-    fetchMasallar();
+    fetchMasallar(); // sayfa ilk açıldığında yükle
   }, []);
+
+  useEffect(() => {
+  if (refreshFlag) {
+    const reload = async () => {
+      await fetchMasallar();
+    };
+    reload();
+  }
+}, [refreshFlag]);
 
 
   return (
