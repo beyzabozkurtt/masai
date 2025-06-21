@@ -93,6 +93,7 @@ export default function PublicStoriesPage({ navigation }) {
           author: item.userRef?.name || 'Bilinmeyen',
           theme: item.theme || 'Tema yok',
           characters: Array.isArray(item.characters) ? item.characters : ['Belirtilmemiş'],
+          imageUrl: item.imageUrl || null,
         },
 })
       }

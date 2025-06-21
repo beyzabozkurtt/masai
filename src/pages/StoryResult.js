@@ -37,30 +37,39 @@ export default function StoryResult({ route, navigation }) {
   const [loading, setLoading] = useState(!routeStory);
 
   useEffect(() => {
-    const fetchStoryIfNeeded = async () => {
-      if (!routeStory && id) {
-        try {
-          const response = await fetch(`${API_URL}/story/${id}`);
-          const data = await response.json();
-          setStoryData({
-            title: data.title || 'Başlık Yok',
-            fullStory: data.fullStory || 'Masal içeriği bulunamadı.',
-            author: data.userRef?.name || 'Bilinmeyen',
-            theme: data.theme || null,
-            characters: data.characters || [],
-            imageUrl: data.imageUrl || null,
-          });
-          setLikesCount(data.likesCount || 0);
-        } catch (err) {
-          console.error('Masal detayları alınamadı:', err);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
+  const fetchStoryIfNeeded = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await fetch(`${API_URL}/story/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
 
-    fetchStoryIfNeeded();
-  }, [id]);
+      if (!routeStory) {
+        setStoryData({
+          title: data.title || 'Başlık Yok',
+          fullStory: data.fullStory || 'Masal içeriği bulunamadı.',
+          author: data.userRef?.name || 'Bilinmeyen',
+          theme: data.theme || null,
+          characters: data.characters || [],
+          imageUrl: data.imageUrl || null,
+        });
+      }
+
+      setLikesCount(data.likesCount || 0);
+      setLiked(data.liked || false); // 👍 burası önemli
+    } catch (err) {
+      console.error('Masal detayları alınamadı:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchStoryIfNeeded();
+}, [id]);
+
 
   const handleToggleLike = async () => {
     try {
@@ -95,24 +104,20 @@ export default function StoryResult({ route, navigation }) {
 
   return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>{storyData.title}</Text>
+       
 
         {storyData.imageUrl && (
             <Image
                 source={{ uri: storyData.imageUrl }}
                 style={styles.storyImage}
                 resizeMode="contain"
+                
             />
         )}
-
+ <Text style={styles.title}>{storyData.title}</Text>
         <Text style={styles.subtitle}>Yazan: {storyData.author}</Text>
         {storyData.theme && <Text style={styles.subtitle}>Tema: {storyData.theme}</Text>}
         
-
-        <Text style={styles.story}>
-        {storyData.fullStory || 'Masal içeriği bulunamadı.'}
-        </Text>
-
         {/* 💜 Beğeni Butonu */}
         <TouchableOpacity
             style={[styles.likeButton, liked ? styles.liked : null]}
@@ -124,9 +129,10 @@ export default function StoryResult({ route, navigation }) {
           <Text style={styles.likeCount}>({likesCount})</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.buttonText}>Ana Sayfaya Dön</Text>
-        </TouchableOpacity>
+        <Text style={styles.story}>
+        {storyData.fullStory || 'Masal içeriği bulunamadı.'}
+        </Text>
+
       </ScrollView>
   );
 }
@@ -145,18 +151,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontFamily: 'ms-bold',
     color: '#6c63ff',
-    marginBottom: 10,
+    marginBottom: 15,
     textAlign: 'center',
   },
   storyImage: {
-    width: '100%',
-    height: 250,
-    borderRadius: 15,
-    marginBottom: 20,
-  },
+  width: '80%',
+  aspectRatio: 1, // 📸 Oranı korur, kareye yakınsa tam oturur
+  borderRadius: 16,
+  marginBottom: 20,
+  alignSelf: 'center',
+},
+
   subtitle: {
     fontSize: 15,
     fontFamily: 'ms-regular',
@@ -174,14 +182,7 @@ const styles = StyleSheet.create({
   likeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#eee',
-    borderRadius: 10,
-    paddingVertical: 10,
-    marginBottom: 16,
-  },
-  liked: {
-    backgroundColor: '#f0e6ff',
+    justifyContent: 'left',
   },
   likeButtonText: {
     fontSize: 16,
