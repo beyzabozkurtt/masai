@@ -13,8 +13,6 @@ const boxWidth = windowWidth * 0.24;  // yaklaşık %24 genişlik
 const boxHeight = boxWidth * 1.1;     // oranlı yükseklik
 
 const categories = [
-  { title: 'Keşif' },
-  { title: 'Gizem' },
   { title: 'Macera' },
   { title: 'Dostluk' },
   { title: 'Doğa' },
@@ -22,6 +20,7 @@ const categories = [
   { title: 'Hayvanlar' },
   { title: 'Aile' },
   { title: 'Sihir' },
+  { title: 'Keşif' },
 ];
 
 const Categories = ({ navigation }) => {

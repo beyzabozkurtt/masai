@@ -37,9 +37,9 @@ const Header = ({ onMenuPress, onSearchPress, name = 'Misafir', navigation }) =>
   const handleMenuItemPress = (action) => {
     setMenuVisible(false);
     if (action === 'profile') {
-      navigation.navigate('Profile');
+      navigation.navigate('HomeStack', { screen: 'ProfilePage' });
     } else if (action === 'myStories') {
-      navigation.navigate('Masallarım');
+      navigation.navigate('HomeStack', { screen: 'MyStoriesPage' });
     } else if (action === 'help') {
       Alert.alert('Yardım', 'Yardım sayfası yakında!');
     } else if (action === 'logout') {
@@ -98,24 +98,6 @@ const Header = ({ onMenuPress, onSearchPress, name = 'Misafir', navigation }) =>
           </TouchableOpacity>
 
           <View style={styles.divider} />
-
-          <TouchableOpacity
-            onPress={() => handleMenuItemPress('help')}
-            style={styles.menuItemTouchable}
-          >
-            <View style={styles.menuItemRow}>
-              <Ionicons
-                name="help-circle-outline"
-                size={18}
-                color="#6c63ff"
-                style={styles.menuIcon}
-              />
-              <Text style={styles.menuItem}>Yardım</Text>
-            </View>
-          </TouchableOpacity>
-
-          <View style={styles.divider} />
-
           <TouchableOpacity
             onPress={() => handleMenuItemPress('logout')}
             style={[styles.menuItemTouchable, styles.logoutButton]}
@@ -238,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    height:210,
+    height:180,
     width:180,
     zIndex: 999,
   },
@@ -249,6 +231,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',  // Sola hizalama
+    
   },
   menuIcon: {
     marginRight: 10,
@@ -264,7 +247,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   logoutButton: {
-    marginTop: 10,
+    marginTop: 30,
   },
   logoutText: {
     color: '#ff4d4d',

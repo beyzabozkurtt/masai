@@ -9,6 +9,8 @@ import MasalGeneratePage from '../pages/MasalGeneratePage';
 import PublicStoriesPage from '../pages/PublicStoriesPage';
 import CategoryStoriesPage from '../pages/CategoryStoriesPage';
 import StoryResult from '../pages/StoryResult';
+import MyStoriesPage from '../pages/MyStoriesPage';
+import ProfilePage from '../pages/ProfilePage';
 const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator();
 
@@ -18,6 +20,8 @@ const HomeStackScreen = () => (
     <HomeStack.Screen name="HomePage" component={HomePage} />
     <HomeStack.Screen name="CategoryStoriesPage" component={CategoryStoriesPage} />
     <HomeStack.Screen name="StoryResult" component={StoryResult} />
+    <HomeStack.Screen name="MyStoriesPage" component={MyStoriesPage} />
+    <HomeStack.Screen name="ProfilePage" component={ProfilePage} />
   </HomeStack.Navigator>
 );
 
